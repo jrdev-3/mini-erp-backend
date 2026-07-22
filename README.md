@@ -119,7 +119,23 @@ Toda alteração integrada à branch principal disparará um build automático e
 
 ## 🤝 Desenvolvimento Orientado a IA e Engenharia de Prompt
 
-Este projeto serve também como um caso de estudo sobre como um engenheiro de software pode atuar em pareria com Inteligências Artificiais avançadas. O repositório documenta de forma transparente (através do histórico de commits e mensagens) a colaboração ativa entre o desenvolvedor (guiando as decisões de design, requisitos e regras de negócio) e o assistente **Antigravity** (responsável por propor arquitetura, gerar boilerplate, implementar lógica e realizar refatorações).
+Este projeto serve também como um caso de estudo sobre como um engenheiro de software pode atuar em parceria com Inteligências Artificiais avançadas. O repositório documenta de forma transparente (através do histórico de commits e mensagens) a colaboração ativa entre o desenvolvedor (guiando as decisões de design, requisitos e regras de negócio) e o assistente **Antigravity** (responsável por propor arquitetura, gerar boilerplate, implementar lógica e realizar refatorações).
+
+---
+
+## 🧠 Direcionamento Técnico do Piloto Humano
+
+Ao contrário de projetos onde a IA toma todas as decisões de forma autônoma, a arquitetura e a seleção de stack deste Mini ERP foram inteiramente desenhadas e justificadas pelas decisões técnicas do desenvolvedor (**Joaby**), com base em sua experiência prática. A IA atuou estritamente sob as seguintes diretrizes e defesas técnicas estabelecidas pelo piloto:
+
+1. **Escolha Consciente de Go (Golang) para o Backend:**
+   - **Previsibilidade e Rigidez:** A ausência de "mágicas implícitas" em runtime no Go, somada ao seu compilador estritamente rígido (que previne falhas graves de execução antes de irem para produção), cria uma sintaxe extremamente previsível que otimiza de forma única o desenvolvimento conjunto com Inteligências Artificiais.
+   - **Eficiência Computacional:** A compilação para binário nativo com baixíssimo consumo de recursos (RAM e CPU) possibilita rodar a API de forma econômica.
+   - **Segurança de Dependências:** O ecossistema de dependências enxuto minimiza o risco de segurança na cadeia de suprimentos (*supply chain*).
+
+2. **Escolha Consciente do Supabase (PostgreSQL) para Persistência:**
+   - **Robustez Relacional:** O uso do PostgreSQL como base é inegociável para garantir a consistência transacional (ACID) requerida por regras de negócio de um ERP (estoque e fluxos financeiros).
+   - **Viabilidade de Hospedagem:** A escolha pelo Supabase permite usufruir da solidez do Postgres na nuvem aproveitando a cota gratuita da plataforma, ideal para viabilizar projetos de portfólio sem custo financeiro inicial.
 
 ---
 Criado com ❤️ por [Joaby Rodrigues da Silva](https://github.com/jrdev-3) em colaboração com Antigravity (Google DeepMind).
+
