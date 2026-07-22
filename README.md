@@ -122,4 +122,4 @@ Toda alteração integrada à branch principal disparará um build automático e
 Este projeto serve também como um caso de estudo sobre como um engenheiro de software pode atuar em pareria com Inteligências Artificiais avançadas. O repositório documenta de forma transparente (através do histórico de commits e mensagens) a colaboração ativa entre o desenvolvedor (guiando as decisões de design, requisitos e regras de negócio) e o assistente **Antigravity** (responsável por propor arquitetura, gerar boilerplate, implementar lógica e realizar refatorações).
 
 ---
-Criado com ❤️ por [Joab](https://github.com/joab-silva) em colaboração com Antigravity (Google DeepMind).
+Criado com ❤️ por [Joaby Rodrigues da Silva](https://github.com/jrdev-3) em colaboração com Antigravity (Google DeepMind).
