@@ -24,28 +24,28 @@ mini-erp-backend/
 │   ├── contact/              # Módulo de Contatos (Clientes e Fornecedores)
 │   │   ├── dto.go
 │   │   ├── handler.go
-│   │   ├── model.go          # Entidade Contact com tipo_pessoa e endereço
+│   │   ├── model.go          # Entidade Contact (is_customer, is_supplier, is_active, tipo_pessoa e endereço)
 │   │   ├── repository.go
 │   │   ├── routes.go
 │   │   └── service.go
 │   ├── product/              # Módulo de Produtos
 │   │   ├── dto.go
 │   │   ├── handler.go
-│   │   ├── model.go          # Entidade Product com SKU, preços de custo/venda e unidade
+│   │   ├── model.go          # Entidades Product e Category (SKU, preços, unidade, is_active)
 │   │   ├── repository.go
 │   │   ├── routes.go
 │   │   └── service.go
 │   ├── inventory/            # Módulo de Estoque
 │   │   ├── dto.go
 │   │   ├── handler.go
-│   │   ├── model.go          # Saldo atual de estoque e logs de movimentação
+│   │   ├── model.go          # Saldo atual (estoque >= 0) e logs de movimentação com origem_id
 │   │   ├── repository.go
 │   │   ├── routes.go
 │   │   └── service.go
 │   ├── sale/                 # Módulo de Vendas
 │   │   ├── dto.go
 │   │   ├── handler.go
-│   │   ├── model.go          # Pedidos de venda e itens do pedido
+│   │   ├── model.go          # Pedidos de venda e itens (subtotal gerado automaticamente pelo banco)
 │   │   ├── repository.go
 │   │   ├── routes.go         # Endpoints de faturamento e o endpoint especial de PDV
 │   │   └── service.go        # Regras de orquestração de vendas e gatilhos automáticos
@@ -109,8 +109,8 @@ Toda a API RESTful exposta pelo servidor HTTP Echo seguirá um padrão rígido d
 O controle e a evolução do esquema do banco de dados PostgreSQL (no Supabase e localmente) são gerenciados de forma explícita e controlada:
 
 *   **Padrão de Arquivos:** As alterações de banco são organizadas na pasta `migrations/` na raiz do projeto, utilizando scripts em SQL Puro numerados sequencialmente em pares de subida (*up*) e descida (*down*):
-    *   `000001_create_users_table.up.sql` (Criação de tabelas/índices)
-    *   `000001_create_users_table.down.sql` (Reversão das alterações)
+    *   `000001_initialize_schema.up.sql` (Inicialização de tabelas/índices do ERP)
+    *   `000001_initialize_schema.down.sql` (Reversão completa das alterações)
 *   **Execução:** A execução das migrações em ambientes locais e de produção será feita via utilitário de linha de comando ou script de automação documentado, garantindo que o banco de dados esteja sempre sincronizado com o código.
 
 ---
