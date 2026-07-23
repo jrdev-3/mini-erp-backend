@@ -6,7 +6,7 @@ Status: Aceito
 Toda API RESTful necessita de um mecanismo para gerenciar rotas, middlewares de segurança, desserialização de dados de requisição (JSON) e formatação de respostas. Embora a biblioteca padrão de Go (`net/http`) seja excelente, o desenvolvimento de um ERP exige uma estrutura de middlewares robusta (CORS, logs, recuperação de panic, segurança) e facilidade de manipulação de requisições sem redundância de código.
 
 ## Decisão
-Decidimos utilizar o framework **Echo** (`github.com/labstack/echo/v4`) para gerenciar as rotas, middlewares e o ciclo de requisição/resposta HTTP da nossa API.
+Decidimos utilizar o framework **Echo** em sua versão estável principal **v5** (`github.com/labstack/echo/v5`) para gerenciar as rotas, middlewares e o ciclo de requisição/resposta HTTP da nossa API, alinhando o projeto com as práticas modernas do ecossistema Go (compatíveis com o compilador `go1.25+` instalado).
 
 As justificativas para a escolha do Echo são:
 - **Alta Performance:** O roteamento baseado em árvore Radix minimiza o consumo de memória e a latência de despacho de rotas.
