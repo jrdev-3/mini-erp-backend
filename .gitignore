@@ -1,0 +1,31 @@
+# Binários e Executáveis do Go
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+__debug_bin
+main
+
+# Variáveis de Ambiente e Segredos (Segurança Absoluta)
+.env
+.env.*
+!.env.example
+secrets.json
+
+# IDEs e Ferramentas Locais
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Contexto local da IA (AGENTS.md)
+agents/
+
+# Logs e Arquivos de Sistema
+*.log
+.DS_Store
