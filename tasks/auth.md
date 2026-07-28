@@ -30,16 +30,16 @@ Este módulo gerencia a segurança, o controle de acesso e o isolamento multi-te
     *   [x] Geração de Token JWT offline assinado digitalmente com chave secreta do Supabase.
 
 ### 4. Camada de Apresentação e Roteamento (`Adapter/Router`)
-*   [ ] Desenvolver o `handler.go` contendo as rotas:
+*   [x] Desenvolver o `handler.go` contendo as rotas:
     *   `POST /api/v1/auth/register` (Público - Cria tenant e primeiro usuário ADMIN)
     *   `POST /api/v1/auth/login` (Público - Retorna o JWT)
     *   `PATCH /api/v1/admin/users/:id/toggle` (Protegida - Ativa/Desativa usuário)
-*   [ ] Decorar os handlers do módulo com as tags do Swagger para documentação das rotas.
-*   [ ] Configurar as rotas em `routes.go` vinculando o roteador Echo v5.
-*   [ ] Desenvolver os middlewares em `internal/middleware/`:
-    *   [ ] `auth.go`: Middleware de validação do JWT offline decodificando `tenant_id` e `role` para o contexto da requisição.
-    *   [ ] `rbac.go`: Middleware para validar cargo de `ADMIN` em rotas sensíveis.
+*   [x] Decorar os handlers do módulo com as tags do Swagger para documentação das rotas.
+*   [x] Configurar as rotas em `routes.go` vinculando o roteador Echo v5.
+*   [x] Desenvolver os middlewares em `internal/middleware/`:
+    *   [x] `auth.go`: Middleware de validação do JWT offline decodificando `tenant_id` e `role` para o contexto da requisição.
+    *   [x] `rbac.go`: Middleware para validar cargo de `ADMIN` em rotas sensíveis.
 
 ---
 
-## 📊 Status de Conclusão: `75%`
+## 📊 Status de Conclusão: `100%`
