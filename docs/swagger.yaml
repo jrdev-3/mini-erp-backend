@@ -1,0 +1,195 @@
+definitions:
+  auth.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  auth.LoginResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/auth.User'
+    type: object
+  auth.RegisterRequest:
+    properties:
+      company_name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  auth.User:
+    properties:
+      atualizado_em:
+        type: string
+      criado_em:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      role:
+        description: ADMIN ou USER
+        type: string
+      tenant_id:
+        type: string
+    type: object
+  auth.toggleRequest:
+    properties:
+      active:
+        type: boolean
+    type: object
+info:
+  contact: {}
+paths:
+  /admin/users/{id}/toggle:
+    patch:
+      consumes:
+      - application/json
+      description: Altera o status de atividade de um usuário dentro de seu próprio
+        tenant (Requer ADMIN).
+      parameters:
+      - description: ID do Usuário
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Status ativo (active)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.toggleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Status atualizado com sucesso
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Não autorizado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Acesso proibido
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Usuário não encontrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erro interno no servidor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Ativar ou desativar um usuário
+      tags:
+      - administracao
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Valida as credenciais do usuário e retorna um token JWT de acesso
+        offline.
+      parameters:
+      - description: Credenciais de login
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.LoginResponse'
+        "400":
+          description: E-mail ou senha obrigatórios
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Credenciais inválidas
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Usuário inativo
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erro interno no servidor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Realizar autenticação de usuário
+      tags:
+      - autenticacao
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Cria uma nova conta de inquilino (empresa) e o primeiro usuário
+        com cargo de ADMIN.
+      parameters:
+      - description: Dados de cadastro
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/auth.User'
+        "400":
+          description: Dados inválidos ou e-mail já cadastrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erro interno no servidor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Registrar novo Tenant e Administrador
+      tags:
+      - autenticacao
+swagger: "2.0"

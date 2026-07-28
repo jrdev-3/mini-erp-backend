@@ -8,10 +8,28 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
+	swaggerFiles "github.com/swaggo/files"
 
+	_ "github.com/jrdev-3/mini-erp-backend/docs"
 	"github.com/jrdev-3/mini-erp-backend/internal/auth"
 	customMiddleware "github.com/jrdev-3/mini-erp-backend/internal/middleware"
 )
+
+// @title           Mini ERP API
+// @version         1.0
+// @description     API de backend para o sistema de Mini ERP, desenvolvida em Go seguindo Clean Architecture.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   Suporte JR DEV
+// @contact.url    https://github.com/jrdev-3
+
+// @host      localhost:8080
+// @BasePath  /api/v1
+
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in                          header
+// @name                        Authorization
+// @description                 Insira o token JWT no formato: Bearer <TOKEN>
 
 func main() {
 	e := echo.New()
@@ -61,6 +79,14 @@ func main() {
 
 	// 5. Registrar as rotas no Echo
 	auth.RegisterRoutes(v1, authHandler, authMiddleware, adminMiddleware)
+
+	// 6. Expor documentação do Swagger UI em ambientes locais/staging (oculta em produção)
+	if os.Getenv("APP_ENV") != "production" {
+		e.GET("/swagger/doc.json", func(c *echo.Context) error {
+			return c.File("docs/swagger.json")
+		})
+		e.GET("/swagger/*", echo.WrapHandler(swaggerFiles.Handler))
+	}
 
 	// Inicialização do servidor HTTP com suporte à porta dinâmica do Render
 	log.Printf("[SERVER] Servidor do Mini ERP iniciado com sucesso na porta %s", port)
