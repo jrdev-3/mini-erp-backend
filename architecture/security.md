@@ -55,7 +55,11 @@ Este documento estabelece as regras e padrões de mitigação para as principais
     *   Delegar o motor de autenticação para o Supabase Auth (que trata hashing de senhas, expiração de sessões e rate limit contra força bruta nativamente).
     *   **Validação Criptográfica Offline (Alta Performance):** Para evitar latência de rede adicional em cada chamada à API (especialmente crítico para operações rápidas no PDV), o backend em Go não fará requisições externas para o Supabase a fim de verificar sessões. Em vez disso, o middleware do Go validará a assinatura criptográfica e a expiração do JWT localmente e em memória, utilizando a chave secreta JWT (JWT Secret) do Supabase armazenada de forma segura nas variáveis de ambiente.
 
-### A08: Software or Data Integrity Failures (Falhas de Integridade de Dados)
+### A08: Software or Data Integrity Failures (Falhas de Integridade de Dados e Concorrência)
 *   **Medida:**
-    *   Garantir a integridade dos dados na camada de banco de dados do Supabase utilizando chaves estrangeiras (`REFERENCES`), restrições (`CHECK constraints`) e triggers de integridade adequadas.
-    *   Executar validações manuais consistentes dos dados recebidos nos handlers (verificando limites de caracteres, formatos de e-mail e valores positivos para valores monetários) antes de persistir alterações.
+    *   **Mitigação de Condições de Corrida (Race Conditions):** Como o Echo gerencia requisições de forma concorrente em goroutines, as atualizações de saldos de estoque e fluxo de caixa nunca devem ser calculadas na memória do Go (Read-Modify-Write). Em vez disso:
+        *   Para incrementos ou decrementos simples, delegar a matemática diretamente à query SQL (ex: `UPDATE ... SET quantidade = quantidade - $1`).
+        *   Para operações complexas que exigem validação prévia no Go, abrir transações no banco de dados e utilizar o bloqueio pessimista via `SELECT ... FOR UPDATE` no Postgres para travar o registro até o fim da transação.
+    *   **Auditoria de Concorrência do Go:** Rodar ativamente a verificação de concorrência com o detector de corrida oficial do Go (`go test -race ./...`) durante a fase de testes e builds locais.
+    *   **Integridade Referencial no Banco:** Garantir a consistência dos dados utilizando chaves estrangeiras (`REFERENCES`), restrições de verificação (`CHECK constraints`) e índices de unicidade compostos para multi-tenant.
+    *   **Validação de Entrada:** Executar validações rígidas de dados recebidos (comprimento, formato de e-mail, e valores monetários não negativos) antes de qualquer persistência.
