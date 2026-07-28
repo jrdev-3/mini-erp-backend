@@ -9,12 +9,44 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
-	swaggerFiles "github.com/swaggo/files"
 
 	_ "github.com/jrdev-3/mini-erp-backend/docs"
 	"github.com/jrdev-3/mini-erp-backend/internal/auth"
 	customMiddleware "github.com/jrdev-3/mini-erp-backend/internal/middleware"
 )
+
+const swaggerHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mini ERP - API Documentation</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+  <style>
+    html { box-sizing: border-box; overflow-y: scroll; }
+    *, *:before, *:after { box-sizing: inherit; }
+    body { margin: 0; background: #fafafa; }
+  </style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+  <script>
+    window.onload = function() {
+      window.ui = SwaggerUIBundle({
+        url: "/swagger/doc.json",
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "BaseLayout"
+      });
+    };
+  </script>
+</body>
+</html>`
 
 // @title           Mini ERP API
 // @version         1.0
@@ -83,17 +115,18 @@ func main() {
 
 	// 6. Expor documentação do Swagger UI em ambientes locais/staging (oculta em produção)
 	if os.Getenv("APP_ENV") != "production" {
-		// Redireciona a rota base /swagger para a UI com a query do JSON local (evita carregar a Petstore padrão)
-		e.GET("/swagger", func(c *echo.Context) error {
-			return c.Redirect(http.StatusMovedPermanently, "/swagger/index.html?url=/swagger/doc.json")
-		})
-		e.GET("/swagger/", func(c *echo.Context) error {
-			return c.Redirect(http.StatusMovedPermanently, "/swagger/index.html?url=/swagger/doc.json")
-		})
+		// Serve a documentação JSON gerada localmente pelo swag
 		e.GET("/swagger/doc.json", func(c *echo.Context) error {
 			return c.File("docs/swagger.json")
 		})
-		e.GET("/swagger/*", echo.WrapHandler(http.StripPrefix("/swagger", swaggerFiles.Handler)))
+
+		// Serve o Swagger UI leve carregado via CDN (impede o carregamento da Petstore e resolve conflito Echo v4/v5)
+		swaggerHandler := func(c *echo.Context) error {
+			return c.HTML(http.StatusOK, swaggerHTML)
+		}
+		e.GET("/swagger", swaggerHandler)
+		e.GET("/swagger/", swaggerHandler)
+		e.GET("/swagger/index.html", swaggerHandler)
 	}
 
 	// Inicialização do servidor HTTP com suporte à porta dinâmica do Render
