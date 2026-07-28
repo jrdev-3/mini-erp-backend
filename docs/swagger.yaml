@@ -1,19 +1,20 @@
+basePath: /api/v1
 definitions:
-  auth.LoginRequest:
+  internal_auth.LoginRequest:
     properties:
       email:
         type: string
       password:
         type: string
     type: object
-  auth.LoginResponse:
+  internal_auth.LoginResponse:
     properties:
       token:
         type: string
       user:
-        $ref: '#/definitions/auth.User'
+        $ref: '#/definitions/internal_auth.User'
     type: object
-  auth.RegisterRequest:
+  internal_auth.RegisterRequest:
     properties:
       company_name:
         type: string
@@ -22,7 +23,7 @@ definitions:
       password:
         type: string
     type: object
-  auth.User:
+  internal_auth.User:
     properties:
       atualizado_em:
         type: string
@@ -40,13 +41,21 @@ definitions:
       tenant_id:
         type: string
     type: object
-  auth.toggleRequest:
+  internal_auth.toggleRequest:
     properties:
       active:
         type: boolean
     type: object
+host: localhost:8080
 info:
-  contact: {}
+  contact:
+    name: Suporte JR DEV
+    url: https://github.com/jrdev-3
+  description: API de backend para o sistema de Mini ERP, desenvolvida em Go seguindo
+    Clean Architecture.
+  termsOfService: http://swagger.io/terms/
+  title: Mini ERP API
+  version: "1.0"
 paths:
   /admin/users/{id}/toggle:
     patch:
@@ -65,7 +74,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/auth.toggleRequest'
+          $ref: '#/definitions/internal_auth.toggleRequest'
       produces:
       - application/json
       responses:
@@ -122,14 +131,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/auth.LoginRequest'
+          $ref: '#/definitions/internal_auth.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.LoginResponse'
+            $ref: '#/definitions/internal_auth.LoginResponse'
         "400":
           description: E-mail ou senha obrigatórios
           schema:
@@ -169,14 +178,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/auth.RegisterRequest'
+          $ref: '#/definitions/internal_auth.RegisterRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/auth.User'
+            $ref: '#/definitions/internal_auth.User'
         "400":
           description: Dados inválidos ou e-mail já cadastrado
           schema:
@@ -192,4 +201,10 @@ paths:
       summary: Registrar novo Tenant e Administrador
       tags:
       - autenticacao
+securityDefinitions:
+  ApiKeyAuth:
+    description: 'Insira o token JWT no formato: Bearer <TOKEN>'
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
