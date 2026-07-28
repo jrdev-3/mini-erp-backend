@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -40,6 +41,9 @@ func (r *repository) GetByEmail(ctx context.Context, email string) (*User, error
 		&u.ID, &u.Email, &u.PasswordHash, &u.Role, &u.IsActive, &u.TenantID, &u.CriadoEm, &u.AtualizadoEm,
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
 		return nil, err
 	}
 	return &u, nil
@@ -57,6 +61,9 @@ func (r *repository) GetByID(ctx context.Context, id string, tenantID string) (*
 		&u.ID, &u.Email, &u.PasswordHash, &u.Role, &u.IsActive, &u.TenantID, &u.CriadoEm, &u.AtualizadoEm,
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
 		return nil, err
 	}
 	return &u, nil
@@ -74,7 +81,7 @@ func (r *repository) UpdateActiveStatus(ctx context.Context, id string, tenantID
 		return err
 	}
 	if result.RowsAffected() == 0 {
-		return pgx.ErrNoRows // Retorna erro de linha não encontrada para ocultar recurso via 404
+		return ErrUserNotFound
 	}
 	return nil
 }

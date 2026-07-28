@@ -20,14 +20,14 @@ Este módulo gerencia a segurança, o controle de acesso e o isolamento multi-te
     *   [x] Garantir queries parametrizadas (placeholders `$1`, `$2`) contra SQL Injection.
 
 ### 3. Camada de Aplicação (`Application`)
-*   [ ] Criar as structs de DTO em `dto.go` para JSON Binding:
+*   [x] Criar as structs de DTO em `dto.go` para JSON Binding:
     *   `RegisterRequest` (e-mail válido, senha forte, nome da empresa para gerar tenant).
     *   `LoginRequest` (e-mail e senha).
     *   `LoginResponse` (token JWT gerado com `tenant_id` e `role` embutidos).
-*   [ ] Implementar o `service.go` com as regras de negócio:
-    *   [ ] Hashing de senhas seguro utilizando `bcrypt` (custo padrão 10 ou mais).
-    *   [ ] Validação de e-mail único.
-    *   [ ] Geração de Token JWT offline assinado digitalmente com chave secreta do Supabase.
+*   [x] Implementar o `service.go` com as regras de negócio:
+    *   [x] Hashing de senhas seguro utilizando `bcrypt` (custo padrão 10 ou mais).
+    *   [x] Validação de e-mail único.
+    *   [x] Geração de Token JWT offline assinado digitalmente com chave secreta do Supabase.
 
 ### 4. Camada de Apresentação e Roteamento (`Adapter/Router`)
 *   [ ] Desenvolver o `handler.go` contendo as rotas:
@@ -42,4 +42,4 @@ Este módulo gerencia a segurança, o controle de acesso e o isolamento multi-te
 
 ---
 
-## 📊 Status de Conclusão: `50%`
+## 📊 Status de Conclusão: `75%`

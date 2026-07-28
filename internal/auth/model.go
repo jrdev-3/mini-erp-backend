@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"time"
 )
 
@@ -16,6 +17,14 @@ type User struct {
 	CriadoEm     time.Time `json:"criado_em"`
 	AtualizadoEm time.Time `json:"atualizado_em"`
 }
+
+// Erros de domínio do módulo auth
+var (
+	ErrUserNotFound       = errors.New("user not found")
+	ErrEmailAlreadyExists = errors.New("email already in use")
+	ErrInvalidCredentials = errors.New("invalid email or password")
+	ErrUserInactive       = errors.New("user account is inactive")
+)
 
 // Repository define a interface de persistência para o módulo auth.
 // O parâmetro tenantID nos métodos de consulta e escrita assegura a prevenção a BOLA no banco.
