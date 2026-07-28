@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -85,7 +86,7 @@ func main() {
 		e.GET("/swagger/doc.json", func(c *echo.Context) error {
 			return c.File("docs/swagger.json")
 		})
-		e.GET("/swagger/*", echo.WrapHandler(swaggerFiles.Handler))
+		e.GET("/swagger/*", echo.WrapHandler(http.StripPrefix("/swagger", swaggerFiles.Handler)))
 	}
 
 	// Inicialização do servidor HTTP com suporte à porta dinâmica do Render
