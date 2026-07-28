@@ -83,6 +83,13 @@ func main() {
 
 	// 6. Expor documentação do Swagger UI em ambientes locais/staging (oculta em produção)
 	if os.Getenv("APP_ENV") != "production" {
+		// Redireciona a rota base /swagger para a UI com a query do JSON local (evita carregar a Petstore padrão)
+		e.GET("/swagger", func(c *echo.Context) error {
+			return c.Redirect(http.StatusMovedPermanently, "/swagger/index.html?url=/swagger/doc.json")
+		})
+		e.GET("/swagger/", func(c *echo.Context) error {
+			return c.Redirect(http.StatusMovedPermanently, "/swagger/index.html?url=/swagger/doc.json")
+		})
 		e.GET("/swagger/doc.json", func(c *echo.Context) error {
 			return c.File("docs/swagger.json")
 		})
