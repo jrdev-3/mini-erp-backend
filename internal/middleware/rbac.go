@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo/v5"
 )
@@ -18,6 +19,15 @@ func RBAC(allowedRoles ...string) echo.MiddlewareFunc {
 			allowed := false
 			for _, r := range allowedRoles {
 				if role == r {
+					// Dupla validação de segurança para SUPER_ADMIN (verifica se o tenant_id é o tenant mestre da plataforma)
+					if r == "SUPER_ADMIN" {
+						tenantID, _ := c.Get("tenant_id").(string)
+						adminTenantID := os.Getenv("ADMIN_TENANT_ID")
+						if adminTenantID == "" || tenantID != adminTenantID {
+							// Ignora a autorização caso o tenant não seja o administrativo
+							continue
+						}
+					}
 					allowed = true
 					break
 				}

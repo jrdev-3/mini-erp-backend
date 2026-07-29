@@ -23,6 +23,15 @@ definitions:
       password:
         type: string
     type: object
+  internal_auth.SystemAnalytics:
+    properties:
+      active_users:
+        type: integer
+      inactive_users:
+        type: integer
+      total_users:
+        type: integer
+    type: object
   internal_auth.User:
     properties:
       atualizado_em:
@@ -201,6 +210,142 @@ paths:
       summary: Registrar novo Tenant e Administrador
       tags:
       - autenticacao
+  /api/v1/system/analytics:
+    get:
+      consumes:
+      - application/json
+      description: Retorna o total de usuários ativos, inativos e empresas cadastradas
+        no ecossistema (Requer SUPER_ADMIN).
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_auth.SystemAnalytics'
+        "401":
+          description: Não autorizado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Acesso proibido
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erro interno no servidor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Obter métricas de saúde da plataforma (Super Admin)
+      tags:
+      - administracao-plataforma
+  /api/v1/system/users:
+    get:
+      consumes:
+      - application/json
+      description: Retorna a lista completa de todos os usuários cadastrados no ecossistema
+        (Requer SUPER_ADMIN).
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_auth.User'
+            type: array
+        "401":
+          description: Não autorizado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Acesso proibido
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erro interno no servidor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Listar todos os usuários da plataforma (Super Admin)
+      tags:
+      - administracao-plataforma
+  /api/v1/system/users/{id}/toggle:
+    patch:
+      consumes:
+      - application/json
+      description: Altera o status de atividade de qualquer usuário de qualquer tenant
+        na plataforma (Requer SUPER_ADMIN).
+      parameters:
+      - description: ID do Usuário
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Status ativo (active)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_auth.toggleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Status do usuário atualizado com sucesso
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Não autorizado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Acesso proibido
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Usuário não encontrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erro interno no servidor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Ativar ou desativar qualquer usuário (Super Admin)
+      tags:
+      - administracao-plataforma
 securityDefinitions:
   ApiKeyAuth:
     description: 'Insira o token JWT no formato: Bearer <TOKEN>'

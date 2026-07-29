@@ -85,3 +85,71 @@ func (r *repository) UpdateActiveStatus(ctx context.Context, id string, tenantID
 	}
 	return nil
 }
+
+// UpdateActiveStatusGlobal atualiza o status ativo/inativo de qualquer usuário no sistema (Exclusivo Super Admin).
+func (r *repository) UpdateActiveStatusGlobal(ctx context.Context, id string, active bool) error {
+	query := `
+		UPDATE users
+		SET is_active = $1, atualizado_em = NOW()
+		WHERE id = $2
+	`
+	result, err := r.db.Exec(ctx, query, active, id)
+	if err != nil {
+		return err
+	}
+	if result.RowsAffected() == 0 {
+		return ErrUserNotFound
+	}
+	return nil
+}
+
+// GetSystemAnalytics calcula as métricas agregadas da tabela users para o Super Admin.
+func (r *repository) GetSystemAnalytics(ctx context.Context) (*SystemAnalytics, error) {
+	query := `
+		SELECT 
+			COUNT(*)::bigint as total_users,
+			COUNT(*) FILTER (WHERE is_active = true)::bigint as active_users,
+			COUNT(*) FILTER (WHERE is_active = false)::bigint as inactive_users
+		FROM users
+	`
+	var sa SystemAnalytics
+	err := r.db.QueryRow(ctx, query).Scan(
+		&sa.TotalUsers, &sa.ActiveUsers, &sa.InactiveUsers,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &sa, nil
+}
+
+// ListAll retorna todos os usuários cadastrados no sistema ordenados por data de criação decrescente.
+func (r *repository) ListAll(ctx context.Context) ([]*User, error) {
+	query := `
+		SELECT id, email, password_hash, role, is_active, tenant_id, criado_em, atualizado_em
+		FROM users
+		ORDER BY criado_em DESC
+	`
+	rows, err := r.db.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*User
+	for rows.Next() {
+		var u User
+		err := rows.Scan(
+			&u.ID, &u.Email, &u.PasswordHash, &u.Role, &u.IsActive, &u.TenantID, &u.CriadoEm, &u.AtualizadoEm,
+		)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, &u)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}

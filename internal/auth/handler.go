@@ -130,3 +130,83 @@ func (h *Handler) ToggleActive(c *echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "status do usuário atualizado com sucesso"})
 }
+
+// ToggleActiveGlobal godoc
+// @Summary      Ativar ou desativar qualquer usuário (Super Admin)
+// @Description  Altera o status de atividade de qualquer usuário de qualquer tenant na plataforma (Requer SUPER_ADMIN).
+// @Tags         administracao-plataforma
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "ID do Usuário"
+// @Param        request body toggleRequest true "Status ativo (active)"
+// @Success      200  {object}  map[string]string "Status do usuário atualizado com sucesso"
+// @Failure      400  {object}  map[string]string "Parâmetros inválidos"
+// @Failure      401  {object}  map[string]string "Não autorizado"
+// @Failure      403  {object}  map[string]string "Acesso proibido"
+// @Failure      404  {object}  map[string]string "Usuário não encontrado"
+// @Failure      500  {object}  map[string]string "Erro interno no servidor"
+// @Security     ApiKeyAuth
+// @Router       /api/v1/system/users/{id}/toggle [patch]
+func (h *Handler) ToggleActiveGlobal(c *echo.Context) error {
+	id := c.Param("id")
+	if id == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "id do usuário é obrigatório"})
+	}
+
+	var req toggleRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "corpo da requisição inválido"})
+	}
+
+	err := h.service.ToggleUserActiveGlobal(c.Request().Context(), id, req.Active)
+	if err != nil {
+		if errors.Is(err, ErrUserNotFound) {
+			return c.JSON(http.StatusNotFound, map[string]string{"error": "usuário não encontrado"})
+		}
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "erro interno no servidor"})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "status do usuário atualizado com sucesso"})
+}
+
+// GetSystemAnalytics godoc
+// @Summary      Obter métricas de saúde da plataforma (Super Admin)
+// @Description  Retorna o total de usuários ativos, inativos e empresas cadastradas no ecossistema (Requer SUPER_ADMIN).
+// @Tags         administracao-plataforma
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  SystemAnalytics
+// @Failure      401  {object}  map[string]string "Não autorizado"
+// @Failure      403  {object}  map[string]string "Acesso proibido"
+// @Failure      500  {object}  map[string]string "Erro interno no servidor"
+// @Security     ApiKeyAuth
+// @Router       /api/v1/system/analytics [get]
+func (h *Handler) GetSystemAnalytics(c *echo.Context) error {
+	analytics, err := h.service.GetSystemAnalytics(c.Request().Context())
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "erro interno no servidor"})
+	}
+
+	return c.JSON(http.StatusOK, analytics)
+}
+
+// ListAllUsers godoc
+// @Summary      Listar todos os usuários da plataforma (Super Admin)
+// @Description  Retorna a lista completa de todos os usuários cadastrados no ecossistema (Requer SUPER_ADMIN).
+// @Tags         administracao-plataforma
+// @Accept       json
+// @Produce      json
+// @Success      200  {array}   User
+// @Failure      401  {object}  map[string]string "Não autorizado"
+// @Failure      403  {object}  map[string]string "Acesso proibido"
+// @Failure      500  {object}  map[string]string "Erro interno no servidor"
+// @Security     ApiKeyAuth
+// @Router       /api/v1/system/users [get]
+func (h *Handler) ListAllUsers(c *echo.Context) error {
+	users, err := h.service.ListAllUsers(c.Request().Context())
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "erro interno no servidor"})
+	}
+
+	return c.JSON(http.StatusOK, users)
+}

@@ -76,9 +76,10 @@ func main() {
 	// 4. Instanciar middlewares customizados para injeção de dependência nas rotas
 	authMiddleware := customMiddleware.Auth([]byte(jwtSecret))
 	adminMiddleware := customMiddleware.RBAC("ADMIN")
+	superAdminMiddleware := customMiddleware.RBAC("SUPER_ADMIN")
 
 	// 5. Registrar as rotas no Echo
-	auth.RegisterRoutes(v1, authHandler, authMiddleware, adminMiddleware)
+	auth.RegisterRoutes(v1, authHandler, authMiddleware, adminMiddleware, superAdminMiddleware)
 
 	// 6. Expor documentação do Swagger UI em ambientes locais/staging (oculta em produção)
 	if os.Getenv("APP_ENV") != "production" {

@@ -15,6 +15,9 @@ type Service interface {
 	Register(ctx context.Context, req *RegisterRequest) (*User, error)
 	Login(ctx context.Context, req *LoginRequest) (*LoginResponse, error)
 	ToggleUserActive(ctx context.Context, id string, tenantID string, active bool) error
+	ToggleUserActiveGlobal(ctx context.Context, id string, active bool) error
+	GetSystemAnalytics(ctx context.Context) (*SystemAnalytics, error)
+	ListAllUsers(ctx context.Context) ([]*User, error)
 }
 
 type service struct {
@@ -123,4 +126,22 @@ func (s *service) ToggleUserActive(ctx context.Context, id string, tenantID stri
 		return errors.New("id do usuário e tenant_id são obrigatórios")
 	}
 	return s.repo.UpdateActiveStatus(ctx, id, tenantID, active)
+}
+
+// ToggleUserActiveGlobal ativa ou desativa qualquer usuário do sistema (Exclusivo Super Admin).
+func (s *service) ToggleUserActiveGlobal(ctx context.Context, id string, active bool) error {
+	if id == "" {
+		return errors.New("id do usuário é obrigatório")
+	}
+	return s.repo.UpdateActiveStatusGlobal(ctx, id, active)
+}
+
+// GetSystemAnalytics obtém as métricas de saúde da plataforma para o Super Admin.
+func (s *service) GetSystemAnalytics(ctx context.Context) (*SystemAnalytics, error) {
+	return s.repo.GetSystemAnalytics(ctx)
+}
+
+// ListAllUsers obtém a lista de todos os usuários cadastrados (Exclusivo Super Admin).
+func (s *service) ListAllUsers(ctx context.Context) ([]*User, error) {
+	return s.repo.ListAll(ctx)
 }
