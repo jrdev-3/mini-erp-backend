@@ -11,9 +11,9 @@
         "version": "1.0"
     },
     "host": "localhost:8080",
-    "basePath": "/api/v1",
+    "basePath": "/",
     "paths": {
-        "/admin/users/{id}/toggle": {
+        "/api/v1/admin/users/{id}/toggle": {
             "patch": {
                 "security": [
                     {
@@ -107,7 +107,7 @@
                 }
             }
         },
-        "/auth/login": {
+        "/api/v1/auth/login": {
             "post": {
                 "description": "Valida as credenciais do usuário e retorna um token JWT de acesso offline.",
                 "consumes": [
@@ -177,7 +177,7 @@
                 }
             }
         },
-        "/auth/register": {
+        "/api/v1/auth/register": {
             "post": {
                 "description": "Cria uma nova conta de inquilino (empresa) e o primeiro usuário com cargo de ADMIN.",
                 "consumes": [

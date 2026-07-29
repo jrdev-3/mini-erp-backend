@@ -19,7 +19,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin/users/{id}/toggle": {
+        "/api/v1/admin/users/{id}/toggle": {
             "patch": {
                 "security": [
                     {
@@ -113,7 +113,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/login": {
+        "/api/v1/auth/login": {
             "post": {
                 "description": "Valida as credenciais do usuário e retorna um token JWT de acesso offline.",
                 "consumes": [
@@ -183,7 +183,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/register": {
+        "/api/v1/auth/register": {
             "post": {
                 "description": "Cria uma nova conta de inquilino (empresa) e o primeiro usuário com cargo de ADMIN.",
                 "consumes": [
@@ -323,7 +323,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
-	BasePath:         "/api/v1",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Mini ERP API",
 	Description:      "API de backend para o sistema de Mini ERP, desenvolvida em Go seguindo Clean Architecture.",

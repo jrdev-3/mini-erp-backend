@@ -28,7 +28,7 @@ func NewHandler(service Service) *Handler {
 // @Success      201  {object}  User
 // @Failure      400  {object}  map[string]string "Dados inválidos ou e-mail já cadastrado"
 // @Failure      500  {object}  map[string]string "Erro interno no servidor"
-// @Router       /auth/register [post]
+// @Router       /api/v1/auth/register [post]
 func (h *Handler) Register(c *echo.Context) error {
 	var req RegisterRequest
 	if err := c.Bind(&req); err != nil {
@@ -58,7 +58,7 @@ func (h *Handler) Register(c *echo.Context) error {
 // @Failure      401  {object}  map[string]string "Credenciais inválidas"
 // @Failure      403  {object}  map[string]string "Usuário inativo"
 // @Failure      500  {object}  map[string]string "Erro interno no servidor"
-// @Router       /auth/login [post]
+// @Router       /api/v1/auth/login [post]
 func (h *Handler) Login(c *echo.Context) error {
 	var req LoginRequest
 	if err := c.Bind(&req); err != nil {
@@ -101,7 +101,7 @@ type toggleRequest struct {
 // @Failure      404  {object}  map[string]string "Usuário não encontrado"
 // @Failure      500  {object}  map[string]string "Erro interno no servidor"
 // @Security     ApiKeyAuth
-// @Router       /admin/users/{id}/toggle [patch]
+// @Router       /api/v1/admin/users/{id}/toggle [patch]
 func (h *Handler) ToggleActive(c *echo.Context) error {
 	id := c.Param("id")
 	if id == "" {

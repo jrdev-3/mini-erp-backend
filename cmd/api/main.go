@@ -24,7 +24,7 @@ import (
 // @contact.url    https://github.com/jrdev-3
 
 // @host      localhost:8080
-// @BasePath  /api/v1
+// @BasePath  /
 
 // @securityDefinitions.apikey  ApiKeyAuth
 // @in                          header

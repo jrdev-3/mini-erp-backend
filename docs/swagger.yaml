@@ -1,4 +1,4 @@
-basePath: /api/v1
+basePath: /
 definitions:
   internal_auth.LoginRequest:
     properties:
@@ -57,7 +57,7 @@ info:
   title: Mini ERP API
   version: "1.0"
 paths:
-  /admin/users/{id}/toggle:
+  /api/v1/admin/users/{id}/toggle:
     patch:
       consumes:
       - application/json
@@ -119,7 +119,7 @@ paths:
       summary: Ativar ou desativar um usuário
       tags:
       - administracao
-  /auth/login:
+  /api/v1/auth/login:
     post:
       consumes:
       - application/json
@@ -166,7 +166,7 @@ paths:
       summary: Realizar autenticação de usuário
       tags:
       - autenticacao
-  /auth/register:
+  /api/v1/auth/register:
     post:
       consumes:
       - application/json
