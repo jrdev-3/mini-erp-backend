@@ -33,12 +33,17 @@ Este módulo gerencia a segurança, o controle de acesso e o isolamento multi-te
 *   [x] Desenvolver o `handler.go` contendo as rotas:
     *   `POST /api/v1/auth/register` (Público - Cria tenant e primeiro usuário ADMIN)
     *   `POST /api/v1/auth/login` (Público - Retorna o JWT)
-    *   `PATCH /api/v1/admin/users/:id/toggle` (Protegida - Ativa/Desativa usuário)
+    *   `PATCH /api/v1/admin/users/:id/toggle` (Protegida - Ativa/Desativa colaborador)
+    *   `POST /api/v1/admin/users` (Protegida - Cadastra funcionário no mesmo tenant)
+    *   `GET /api/v1/admin/users` (Protegida - Lista funcionários do comércio)
+    *   `PATCH /api/v1/system/users/:id/toggle` (Exclusivo Super Admin - Ativa/Desativa qualquer usuário do sistema)
+    *   `GET /api/v1/system/analytics` (Exclusivo Super Admin - Métricas agregadas da plataforma)
+    *   `GET /api/v1/system/users` (Exclusivo Super Admin - Lista todos os usuários do ecossistema)
 *   [x] Decorar os handlers do módulo com as tags do Swagger para documentação das rotas.
 *   [x] Configurar as rotas em `routes.go` vinculando o roteador Echo v5.
 *   [x] Desenvolver os middlewares em `internal/middleware/`:
     *   [x] `auth.go`: Middleware de validação do JWT offline decodificando `tenant_id` e `role` para o contexto da requisição.
-    *   [x] `rbac.go`: Middleware para validar cargo de `ADMIN` em rotas sensíveis.
+    *   [x] `rbac.go`: Middleware para validar cargo de `ADMIN` e realizar a dupla validação de `SUPER_ADMIN` contra o `ADMIN_TENANT_ID` da plataforma.
 
 ---
 
