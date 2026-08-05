@@ -153,3 +153,36 @@ func (r *repository) ListAll(ctx context.Context) ([]*User, error) {
 
 	return users, nil
 }
+
+// ListByTenant retorna todos os usuários cadastrados de um determinado inquilino (tenant) ordenados por data de criação decrescente.
+func (r *repository) ListByTenant(ctx context.Context, tenantID string) ([]*User, error) {
+	query := `
+		SELECT id, email, password_hash, role, is_active, tenant_id, criado_em, atualizado_em
+		FROM users
+		WHERE tenant_id = $1
+		ORDER BY criado_em DESC
+	`
+	rows, err := r.db.Query(ctx, query, tenantID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*User
+	for rows.Next() {
+		var u User
+		err := rows.Scan(
+			&u.ID, &u.Email, &u.PasswordHash, &u.Role, &u.IsActive, &u.TenantID, &u.CriadoEm, &u.AtualizadoEm,
+		)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, &u)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}

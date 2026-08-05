@@ -18,6 +18,8 @@ type Service interface {
 	ToggleUserActiveGlobal(ctx context.Context, id string, active bool) error
 	GetSystemAnalytics(ctx context.Context) (*SystemAnalytics, error)
 	ListAllUsers(ctx context.Context) ([]*User, error)
+	CreateEmployee(ctx context.Context, creatorTenantID string, req *CreateUserRequest) (*User, error)
+	ListEmployees(ctx context.Context, tenantID string) ([]*User, error)
 }
 
 type service struct {
@@ -144,4 +146,50 @@ func (s *service) GetSystemAnalytics(ctx context.Context) (*SystemAnalytics, err
 // ListAllUsers obtém a lista de todos os usuários cadastrados (Exclusivo Super Admin).
 func (s *service) ListAllUsers(ctx context.Context) ([]*User, error) {
 	return s.repo.ListAll(ctx)
+}
+
+// CreateEmployee cria um novo usuário do tipo USER vinculado ao mesmo tenant do criador.
+func (s *service) CreateEmployee(ctx context.Context, creatorTenantID string, req *CreateUserRequest) (*User, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
+	// 1. Verificar se o e-mail já está cadastrado no banco globalmente
+	_, err := s.repo.GetByEmail(ctx, req.Email)
+	if err == nil {
+		return nil, ErrEmailAlreadyExists
+	}
+	if err != nil && !errors.Is(err, ErrUserNotFound) {
+		return nil, err
+	}
+
+	// 2. Criptografar a senha com bcrypt
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
+	// 3. Instanciar o usuário funcionário (role = "USER") herdando o tenant do criador
+	newUser := &User{
+		Email:        req.Email,
+		PasswordHash: string(hashedPassword),
+		Role:         "USER",
+		IsActive:     true,
+		TenantID:     creatorTenantID,
+	}
+
+	// 4. Salvar no repositório
+	if err := s.repo.Create(ctx, newUser); err != nil {
+		return nil, err
+	}
+
+	return newUser, nil
+}
+
+// ListEmployees retorna os colaboradores associados a um determinado inquilino (tenantID).
+func (s *service) ListEmployees(ctx context.Context, tenantID string) ([]*User, error) {
+	if tenantID == "" {
+		return nil, errors.New("tenant_id é obrigatório")
+	}
+	return s.repo.ListByTenant(ctx, tenantID)
 }

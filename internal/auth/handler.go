@@ -210,3 +210,65 @@ func (h *Handler) ListAllUsers(c *echo.Context) error {
 
 	return c.JSON(http.StatusOK, users)
 }
+
+// CreateEmployee godoc
+// @Summary      Cadastrar funcionário (Administrador do Comércio)
+// @Description  Cadastra um novo colaborador com papel de USER vinculado ao mesmo tenant do administrador criador (Requer ADMIN).
+// @Tags         administracao
+// @Accept       json
+// @Produce      json
+// @Param        request body CreateUserRequest true "Dados do funcionário"
+// @Success      201  {object}  User
+// @Failure      400  {object}  map[string]string "Dados inválidos ou e-mail já cadastrado"
+// @Failure      401  {object}  map[string]string "Não autorizado"
+// @Failure      403  {object}  map[string]string "Acesso proibido"
+// @Failure      500  {object}  map[string]string "Erro interno no servidor"
+// @Security     ApiKeyAuth
+// @Router       /api/v1/admin/users [post]
+func (h *Handler) CreateEmployee(c *echo.Context) error {
+	tenantID, ok := c.Get("tenant_id").(string)
+	if !ok || tenantID == "" {
+		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "não autorizado"})
+	}
+
+	var req CreateUserRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "corpo da requisição inválido"})
+	}
+
+	user, err := h.service.CreateEmployee(c.Request().Context(), tenantID, &req)
+	if err != nil {
+		if errors.Is(err, ErrEmailAlreadyExists) || strings.Contains(err.Error(), "obrigatório") || strings.Contains(err.Error(), "inválido") || strings.Contains(err.Error(), "mínimo") {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+		}
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "erro interno no servidor"})
+	}
+
+	return c.JSON(http.StatusCreated, user)
+}
+
+// ListEmployees godoc
+// @Summary      Listar funcionários do comércio (Administrador do Comércio)
+// @Description  Retorna a lista completa de todos os colaboradores pertencentes ao mesmo tenant do administrador (Requer ADMIN).
+// @Tags         administracao
+// @Accept       json
+// @Produce      json
+// @Success      200  {array}   User
+// @Failure      401  {object}  map[string]string "Não autorizado"
+// @Failure      403  {object}  map[string]string "Acesso proibido"
+// @Failure      500  {object}  map[string]string "Erro interno no servidor"
+// @Security     ApiKeyAuth
+// @Router       /api/v1/admin/users [get]
+func (h *Handler) ListEmployees(c *echo.Context) error {
+	tenantID, ok := c.Get("tenant_id").(string)
+	if !ok || tenantID == "" {
+		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "não autorizado"})
+	}
+
+	users, err := h.service.ListEmployees(c.Request().Context(), tenantID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "erro interno no servidor"})
+	}
+
+	return c.JSON(http.StatusOK, users)
+}

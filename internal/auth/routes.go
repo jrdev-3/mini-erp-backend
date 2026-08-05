@@ -13,6 +13,8 @@ func RegisterRoutes(g *echo.Group, h *Handler, authMiddleware echo.MiddlewareFun
 
 	// Endpoints Administrativos Protegidos (Autenticação + RBAC de ADMIN)
 	g.PATCH("/admin/users/:id/toggle", h.ToggleActive, authMiddleware, adminMiddleware)
+	g.POST("/admin/users", h.CreateEmployee, authMiddleware, adminMiddleware)
+	g.GET("/admin/users", h.ListEmployees, authMiddleware, adminMiddleware)
 
 	// Endpoints de Sistema (Exclusivo Super Admin - Autenticação + RBAC de SUPER_ADMIN)
 	g.PATCH("/system/users/:id/toggle", h.ToggleActiveGlobal, authMiddleware, superAdminMiddleware)

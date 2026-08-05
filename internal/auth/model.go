@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 )
 
@@ -43,4 +44,28 @@ type Repository interface {
 	UpdateActiveStatusGlobal(ctx context.Context, id string, active bool) error
 	GetSystemAnalytics(ctx context.Context) (*SystemAnalytics, error)
 	ListAll(ctx context.Context) ([]*User, error)
+	ListByTenant(ctx context.Context, tenantID string) ([]*User, error)
+}
+
+// CreateUserRequest representa os dados necessários para o administrador cadastrar um novo funcionário.
+type CreateUserRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+// Validate faz a validação sintática do request de criação de funcionário.
+func (r *CreateUserRequest) Validate() error {
+	if r.Email == "" {
+		return errors.New("e-mail é obrigatório")
+	}
+	if !strings.Contains(r.Email, "@") || !strings.Contains(r.Email, ".") {
+		return errors.New("e-mail inválido")
+	}
+	if r.Password == "" {
+		return errors.New("senha é obrigatória")
+	}
+	if len(r.Password) < 6 {
+		return errors.New("a senha deve ter no mínimo 6 caracteres")
+	}
+	return nil
 }
