@@ -16,6 +16,8 @@ Este é o arquivo âncora de contexto para a API do Mini ERP. Ele deve ser lido 
 5.  **Arquitetura Isolada:** A lógica de domínio e regras de negócio devem residir em `internal/`, isoladas de implementações externas de banco de dados ou roteadores HTTP.
 6.  **Nomenclatura e Idioma do Código:** Todas as variáveis, pastas do projeto, constantes, structs, funções e comentários de código técnico devem ser escritos em **inglês** e possuir nomes altamente **explícitos** (sem abreviações ambíguas).
 7.  **Submissão Estrita:** A IA nunca deve criar, modificar ou executar código, comandos ou configurações sem a autorização prévia ou instrução direta do usuário. A IA atua estritamente como ferramenta executora sob a tutela do piloto humano, sem impor opiniões próprias de design ou comportamento.
+8.  **Atualização Contínua de Tasks:** À medida que desenvolve e avança no código de um módulo, a IA deve atualizar de forma contínua e local os checklists de tarefas (`tasks/<modulo>.md` e `tasks/_index.md`) no workspace, preparando-os para o commit atômico de documentação (`docs:`) que será realizado no encerramento de cada módulo.
+
 
 ## 🗺️ Onde Encontrar Mais Contexto
 *   **Tarefa Atual:** Veja o progresso macro em [tasks/_index.md](tasks/_index.md).
